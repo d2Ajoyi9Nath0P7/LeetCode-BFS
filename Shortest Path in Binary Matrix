@@ -1,0 +1,67 @@
+int dx[8] = {0, 1,1, 1, 0,-1,-1,-1};
+int dy[8] = {1, 1,0,-1,-1,-1, 0, 1};
+
+
+bool isValid(int r,int c,vector<vector<int>>&grid,vector<vector<int>>&vis,int n)
+{
+    if(r >= 0 && r < n && c >= 0 && c < n && grid[r][c] == 0 && vis[r][c] == 0)
+    {
+        return true;
+    }
+    return false;
+}
+
+int solve(int row,int col,int n,vector<vector<int>>&vis,vector<vector<int>>&grid,queue<pair<int,int>>&q,vector<vector<int>>&dis)
+{
+    q.push({row,col});
+    dis[row][col] = 0;
+    vis[row][col] = 1;
+
+    while(!q.empty())
+    {
+        pair<int,int>frnt = q.front();
+        q.pop();
+        int r = frnt.first;
+        int c = frnt.second;
+
+        for(int i = 0 ; i < 8 ; i++)
+        {
+            int new_r = dx[i] + r;
+            int new_c = dy[i] + c;
+
+            if(isValid(new_r,new_c,grid,vis,n))
+            {
+                dis[new_r][new_c] = dis[r][c] + 1;
+                vis[new_r][new_c] = 1;
+                q.push({new_r,new_c});
+
+                if(new_r == n-1 && new_c == n-1)
+                {
+                    return dis[new_r][new_c] + 1;
+                }
+            }
+        }
+    }
+
+    return -1;
+}
+
+int shortestPathBinaryMatrix(vector<vector<int>>& grid)
+{
+    int n = grid.size();
+
+    if(grid[0][0] == 1 || grid[n-1][n-1] == 1)
+    {
+        return -1;
+    }
+    if(n == 1 && grid[0][0] == 0)
+    {
+        return 1;
+    }
+
+    queue<pair<int,int>>q;
+    vector<vector<int>>vis(n,vector<int>(n,0));
+    vector<vector<int>>dis(n,vector<int>(n,0));
+
+    return solve(0,0,n,vis,grid,q,dis);
+}
